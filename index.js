@@ -4,11 +4,9 @@ const bot = new telegramApi(token, { polling: true });
 const infoOptions = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
-      [
-        { text: "канал", callback_data: "1" },
-        { text: "соц сети", callback_data: "2" },
-      ],
-      [{ text: "контакт автора", callback_data: "3" }],
+      [{ text: "канал", callback_data: "1" }],
+      [{ text: "приват канал", callback_data: "2" }],
+      [{ text: "Контент с Boosty", callback_data: "3" }],
       //   [
       //     { text: "7", callback_data: "7" },
       //     { text: "8", callback_data: "8" },
@@ -18,28 +16,44 @@ const infoOptions = {
     ],
   }),
 };
+
+const payOptions = {
+  reply_markup: JSON.stringify({
+    inline_keyboard: [
+      [{ text: "оплатить", callback_data: "pay" }],
+      [{ text: "назад", callback_data: "back" }],
+    ],
+  }),
+};
+
+const paymentMethods = {
+  reply_markup: JSON.stringify({
+    inline_keyboard: [
+      [{ text: "карта", callback_data: "card" }],
+      [{ text: "ЮMoney", callback_data: "yooMoney" }],
+    ],
+  }),
+};
+
+const mainMenu = (chatId) =>
+  bot.sendMessage(chatId, "выберите нужный пункт", infoOptions);
+
 const start = () => {
   bot.setMyCommands([
-    { command: " /start", description: "Начальное приветствие" },
-    { command: " /info", description: "Получить информацию" },
+    { command: " /menu", description: "меню" },
+    { command: " /social", description: "мои соц сети" },
   ]);
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
-    if (text === "/start") {
-      await bot.sendSticker(
-        chatId,
-        "https://tlgrm.eu/_/stickers/1b5/0ab/1b50abf8-8451-40ca-be37-ffd7aa74ec4d/1.webp"
-      );
-      return bot.sendMessage(
-        chatId,
-        `здравствуйте ${msg.from.first_name} вас приветствует бот...`
-      );
+    if (text === "/social") {
+      return bot.sendMessage(chatId, `вот мои соц сети ...`);
     }
-    if (text === "/info") {
+    if (text === "/menu") {
       await bot.sendMessage(chatId, `что конкретно вы хотите увидеть ?`);
-      return bot.sendMessage(chatId, "выберите нужный пункт", infoOptions);
+      return mainMenu(chatId);
+      // return bot.sendMessage(chatId, "выберите нужный пункт", infoOptions);
     }
     return bot.sendMessage(chatId, "я не нашел такой команды");
   });
@@ -47,24 +61,47 @@ const start = () => {
   bot.on("callback_query", async (msg) => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
-    // const chatId = msg.massage.chat.id;
-    // if(data === chats[chatId]){
-    //   return await
-    // }
 
     if (data === "1") {
-      return bot.sendMessage(chatId, `вот ссылка на канал link>`);
+      await bot.sendPhoto(
+        chatId,
+        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1664522009/cld-sample-3.jpg"
+      );
+      return bot.sendMessage(
+        chatId,
+        `Тут ты найдешь много подобного контента бесплатно`
+      );
     }
     if (data === "2") {
-      return bot.sendMessage(chatId, `вот ссылка на соц сеть...`);
+      await bot.sendPhoto(
+        chatId,
+        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1664522009/cld-sample-2.jpg"
+      );
+      return bot.sendMessage(
+        chatId,
+        `более интереснй контетн без блюра, стоимость канала 900Р`,
+        payOptions
+      );
     }
     if (data === "3") {
-      return bot.sendMessage(chatId, `@bushikov`);
+      return bot.sendMessage(
+        chatId,
+        `оформи подписку на мой бусти по этой ссылке ...`
+      );
     }
 
-    console.log(data);
+    if (data === "pay") {
+      return bot.sendMessage(
+        chatId,
+        "выбери удобный для тебя метод оплаты",
+        paymentMethods
+      );
+    }
+    if (data === "back") {
+      return mainMenu(chatId);
+    }
+
     return;
-    console.log(data);
     // bot.sendMessage(chatId, `ты выбрал ${data}`);
   });
 };
