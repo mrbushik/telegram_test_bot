@@ -1,61 +1,31 @@
+const { infoOptions, paymentMethods, payOptions } = require("./options");
 const telegramApi = require("node-telegram-bot-api");
 const token = "5807859315:AAFzgk8CktHHITLqcThveapFITsMZRuJGWU";
 const bot = new telegramApi(token, { polling: true });
-const infoOptions = {
-  reply_markup: JSON.stringify({
-    inline_keyboard: [
-      [{ text: "канал", callback_data: "1" }],
-      [{ text: "приват канал", callback_data: "2" }],
-      [{ text: "Контент с Boosty", callback_data: "3" }],
-      //   [
-      //     { text: "7", callback_data: "7" },
-      //     { text: "8", callback_data: "8" },
-      //     { text: "9", callback_data: "9" },
-      //   ],
-      //   [{ text: "0", callback_data: "0" }],
-    ],
-  }),
-};
-
-const payOptions = {
-  reply_markup: JSON.stringify({
-    inline_keyboard: [
-      [{ text: "оплатить", callback_data: "pay" }],
-      [{ text: "назад", callback_data: "back" }],
-    ],
-  }),
-};
-
-const paymentMethods = {
-  reply_markup: JSON.stringify({
-    inline_keyboard: [
-      [{ text: "карта", callback_data: "card" }],
-      [{ text: "ЮMoney", callback_data: "yooMoney" }],
-    ],
-  }),
-};
 
 const mainMenu = (chatId) =>
-  bot.sendMessage(chatId, "выберите нужный пункт", infoOptions);
+  bot.sendMessage(
+    chatId,
+    "Тут ты можешь насладится моим контентом 💕\nпросто выбери где ты хочешь на меня посмотреть",
+    infoOptions
+  );
 
 const start = () => {
   bot.setMyCommands([
-    { command: " /menu", description: "меню" },
-    { command: " /social", description: "мои соц сети" },
+    { command: " /start", description: "Главное меню" },
+    { command: " /social", description: "Мои соц сети" },
   ]);
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
     if (text === "/social") {
-      return bot.sendMessage(chatId, `вот мои соц сети ...`);
+      return bot.sendMessage(chatId, `Вот мои соц сети ...`);
     }
-    if (text === "/menu") {
-      await bot.sendMessage(chatId, `что конкретно вы хотите увидеть ?`);
+    if (text === "/start") {
       return mainMenu(chatId);
-      // return bot.sendMessage(chatId, "выберите нужный пункт", infoOptions);
     }
-    return bot.sendMessage(chatId, "я не нашел такой команды");
+    return bot.sendMessage(chatId, "Я не нашел такой команды");
   });
 
   bot.on("callback_query", async (msg) => {
@@ -79,21 +49,21 @@ const start = () => {
       );
       return bot.sendMessage(
         chatId,
-        `более интереснй контетн без блюра, стоимость канала 900Р`,
+        `Более интереснй контент без блюра, стоимость канала 900Р`,
         payOptions
       );
     }
     if (data === "3") {
       return bot.sendMessage(
         chatId,
-        `оформи подписку на мой бусти по этой ссылке ...`
+        `Оформи подписку на мой бусти по этой ссылке ...`
       );
     }
 
     if (data === "pay") {
       return bot.sendMessage(
         chatId,
-        "выбери удобный для тебя метод оплаты",
+        "Выбери удобный для тебя метод оплаты",
         paymentMethods
       );
     }
@@ -101,8 +71,20 @@ const start = () => {
       return mainMenu(chatId);
     }
 
+    if (data === "card") {
+      return bot.sendMessage(
+        chatId,
+        `Стоимость приват канала 900Р. Номер карты для оплыты 4010 2020 2020 2020, после оплыты для получения доспупа к каналу вышлите скрин сюда @bushikov`
+      );
+    }
+    if (data === "yooMoney") {
+      return bot.sendMessage(
+        chatId,
+        "Стоимость приват канала 900Р. Номер кошелька для оплыты 4010 2020 2020 2020, после оплыты для получения доспупа к каналу вышлите скрин сюда @bushikov"
+      );
+    }
+
     return;
-    // bot.sendMessage(chatId, `ты выбрал ${data}`);
   });
 };
 
