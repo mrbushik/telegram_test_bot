@@ -1,4 +1,4 @@
-const { infoOptions, paymentMethods, payOptions } = require("./options");
+const { infoOptions, paymentMethods, exampleOptions } = require("./options");
 const telegramApi = require("node-telegram-bot-api");
 const token = "5807859315:AAFzgk8CktHHITLqcThveapFITsMZRuJGWU";
 const bot = new telegramApi(token, { polling: true });
@@ -6,7 +6,7 @@ const bot = new telegramApi(token, { polling: true });
 const mainMenu = (chatId) =>
   bot.sendMessage(
     chatId,
-    "Тут ты можешь насладится моим контентом 💕\nпросто выбери где ты хочешь на меня посмотреть",
+    "Тут можно узнать больше обо мне👨🏻‍💻  выберите нужную кнопку",
     infoOptions
   );
 
@@ -20,7 +20,13 @@ const start = () => {
     const chatId = msg.chat.id;
 
     if (text === "/social") {
-      return bot.sendMessage(chatId, `Вот мои соц сети ...`);
+      return bot.sendMessage(
+        chatId,
+        `Вот мои соц сети ⚡
+GitHub: https://github.com/mrbushik
+LinkedIn: https://www.linkedin.com/in/nikita-bushuev-4347ab237
+      `
+      );
     }
     if (text === "/start") {
       return mainMenu(chatId);
@@ -32,25 +38,17 @@ const start = () => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
 
-    if (data === "1") {
-      await bot.sendPhoto(
+    if (data === "resume") {
+      return bot.sendPhoto(
         chatId,
-        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1664522009/cld-sample-3.jpg"
-      );
-      return bot.sendMessage(
-        chatId,
-        `Тут ты найдешь много подобного контента бесплатно`
+        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1670078360/bushik123/Nikita_Bushuev_Resume_page-0001_dildwy.jpg"
       );
     }
-    if (data === "2") {
-      await bot.sendPhoto(
+    if (data === "example") {
+      return bot.sendPhoto(
         chatId,
-        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1664522009/cld-sample-2.jpg"
-      );
-      return bot.sendMessage(
-        chatId,
-        `Более интереснй контент без блюра, стоимость канала 900Р`,
-        payOptions
+        "https://res.cloudinary.com/drfjcq9hg/image/upload/v1670084834/bushik123/photo_5213161863309805557_y_hnlrn2.jpg",
+        exampleOptions
       );
     }
     if (data === "3") {
@@ -60,7 +58,7 @@ const start = () => {
       );
     }
 
-    if (data === "pay") {
+    if (data === "2card") {
       return bot.sendMessage(
         chatId,
         "Выбери удобный для тебя метод оплаты",
